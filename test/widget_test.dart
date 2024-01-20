@@ -1,30 +1,76 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
+import 'package:fibonacci_calculator/bloc/fib_calc_bloc.dart';
+import 'package:fibonacci_calculator/screens/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:fibonacci_calculator/main.dart';
+import 'package:bloc_test/bloc_test.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+  testWidgets('Fibonacci Calculator smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const MyApp());
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    // Verify that our HomeScreen is rendered.
+    expect(find.byType(HomeScreen), findsOneWidget);
+  });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+  //Write widget test to check if given number is a Fibonacci number
+  testWidgets('Given a number, check if the number is fibonacci',
+      (WidgetTester tester) async {
+    final bloc = FibCalcBloc();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: BlocProvider.value(
+          value: bloc,
+          child: HomeScreen(),
+        ),
+      ),
+    );
+
+    // Enter valid input
+    await tester.enterText(find.byType(TextFormField), '5');
+
+    // Tap the "Is Fibonacci Number?" button
+    await tester.tap(find.byType(ElevatedButton));
+
+    // Rebuild the widget
     await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Verify the result is displayed
+    expect(find.text("The input is a Fibonacci number"), findsOneWidget);
+
+    // Clean up
+    bloc.close();
+  });
+
+  //Write widget test to check if given number is not a Fibonacci number
+  testWidgets('Given a number, check if the number is not fibonacci',
+      (WidgetTester tester) async {
+    final bloc = FibCalcBloc();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: BlocProvider.value(
+          value: bloc,
+          child: HomeScreen(),
+        ),
+      ),
+    );
+
+    // Enter valid input
+    await tester.enterText(find.byType(TextFormField), '4');
+
+    // Tap the "Is Fibonacci Number?" button
+    await tester.tap(find.byType(ElevatedButton));
+
+    // Rebuild the widget
+    await tester.pump();
+
+    // Verify the result is displayed
+    expect(find.text("The input is not a Fibonacci number"), findsOneWidget);
+
+    // Clean up
+    bloc.close();
   });
 }
