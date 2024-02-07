@@ -1,5 +1,7 @@
 //Home Scren
 
+import 'dart:math';
+
 import 'package:fibonacci_calculator/bloc/fib_calc_bloc.dart';
 import 'package:fibonacci_calculator/bloc/fib_calc_event.dart';
 import 'package:fibonacci_calculator/bloc/fib_calc_state.dart';
@@ -7,11 +9,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class HomeScreen extends StatelessWidget {
-  HomeScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _inputController = TextEditingController();
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,6 +64,10 @@ class HomeScreen extends StatelessWidget {
                           context
                               .read<FibCalcBloc>()
                               .add(CheckFibonacciNumber(value));
+                        } else {
+                          setState(() {
+                            _inputController.text = "";
+                          });
                         }
                       },
                       child: const Text("Is Fibonacci Number?"),
@@ -62,17 +75,19 @@ class HomeScreen extends StatelessWidget {
                     const Divider(
                       height: 50,
                     ),
-                    state is FibCalcResult
-                        ? Text(
-                            state.result
-                                ? "The input is a Fibonacci number"
-                                : "The input is not a Fibonacci number",
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )
-                        : const SizedBox(),
+                    _inputController.text.isNotEmpty
+                        ? state is FibCalcResult
+                            ? Text(
+                                state.result
+                                    ? "The input is a Fibonacci number"
+                                    : "The input is not a Fibonacci number",
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              )
+                            : const SizedBox()
+                        : const Text("Please enter a number"),
                   ],
                 ),
               ),

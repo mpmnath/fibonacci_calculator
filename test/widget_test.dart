@@ -24,7 +24,7 @@ void main() {
       MaterialApp(
         home: BlocProvider.value(
           value: bloc,
-          child: HomeScreen(),
+          child: const HomeScreen(),
         ),
       ),
     );
@@ -53,7 +53,7 @@ void main() {
       MaterialApp(
         home: BlocProvider.value(
           value: bloc,
-          child: HomeScreen(),
+          child: const HomeScreen(),
         ),
       ),
     );
